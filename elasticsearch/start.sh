@@ -1,29 +1,29 @@
 #!/bin/sh
 
-if [ -f /conf/env ]; then
-  . /conf/env
+if [ -f /es/config/env ]; then
+  . /es/config/env
 fi
 
-if [ ! -e /conf/elasticsearch.* ]; then
-  cp $ES_HOME/config/elasticsearch.yml /conf
+if [ ! -e /es/config/elasticsearch.* ]; then
+  cp $ES_HOME/config/elasticsearch.yml /es/config
 fi
 
-if [ ! -e /conf/logging.* ]; then
-  cp $ES_HOME/config/logging.yml /conf
+if [ ! -e /es/config/logging.* ]; then
+  cp $ES_HOME/config/logging.yml /es/config
 fi
 
-OPTS="$OPTS -Des.path.conf=/conf \
-  -Des.path.data=/data \
-  -Des.path.logs=/data \
+OPTS="$OPTS -Des.path.conf=/es/config \
+  -Des.path.data=/es/data \
+  -Des.path.logs=/es/data \
   -Des.transport.tcp.port=9300 \
   -Des.http.port=9200"
 
 if [ -n "$CLUSTER" ]; then
   OPTS="$OPTS -Des.cluster.name=$CLUSTER"
   if [ -n "$CLUSTER_FROM" ]; then
-    if [ -d /data/$CLUSTER_FROM -a ! -d /data/$CLUSTER ]; then
+    if [ -d /es/data/$CLUSTER_FROM -a ! -d /es/data/$CLUSTER ]; then
       echo "Performing cluster data migration from $CLUSTER_FROM to $CLUSTER"
-      mv /data/$CLUSTER_FROM /data/$CLUSTER
+      mv /es/data/$CLUSTER_FROM /es/data/$CLUSTER
     fi
   fi
 fi
