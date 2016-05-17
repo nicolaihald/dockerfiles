@@ -28,4 +28,9 @@ EXPOSE 9200 9300
 
 ENV OPTS=-Dnetwork.host=_non_loopback_
 
+
+# default plugin
+#ENV PLUGINS royrusso/elasticsearch-HQ
+RUN bin/plugin install royrusso/elasticsearch-HQ
+
 CMD ["/bin/bash", "/start.sh"]
