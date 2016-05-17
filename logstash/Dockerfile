@@ -14,6 +14,9 @@ RUN mkdir -p /usr/local/lib \
 # grab gosu for easy step-down from root
 ENV GOSU_VERSION 1.7
 RUN set -x \
+	# update geoip
+	&& wget -O /usr/local/bin/gosu "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" \
+
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -30,6 +33,9 @@ RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 46095ACC85485
 ENV LOGSTASH_MAJOR 2.3
 ENV LOGSTASH_VERSION 1:2.3.2-1
 
+ENV LOGSTASH_HOME /opt/logstash
+ENV PATH $LOGSTASH_HOME/bin:$PATH
+
 RUN echo "deb http://packages.elastic.co/logstash/${LOGSTASH_MAJOR}/debian stable main" > /etc/apt/sources.list.d/logstash.list
 
 RUN set -x \
@@ -37,9 +43,13 @@ RUN set -x \
 	&& apt-get install -y --no-install-recommends logstash=$LOGSTASH_VERSION \
 	&& rm -rf /var/lib/apt/lists/*
 
-ENV PATH /opt/logstash/bin:$PATH
+# update geolite database
+RUN set -x \
+	&& wget -q -O tmp/GeoLiteCity.dat.gz "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz"  \
+	&& gzip -d /tmp/GeoLiteCity.dat.gz > /opt/logstash/GeoLiteCity.dat \
+	&& rm /tmp/GeoLiteCity.dat
 
-WORKDIR /opt/logstash
+WORKDIR $LOGSTASH_HOME
 
 COPY start.sh /
 
