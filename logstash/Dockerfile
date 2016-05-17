@@ -55,7 +55,7 @@ COPY start.sh /
 
 # /conf is the default directory where our logstash will read pipeline config files
 # /logs is an optional attach point to reference something like /var/log on the host
-VOLUME ["/config","/logs"]
+VOLUME ["/config","/data"]
 
 # For collectd reception
 EXPOSE 25826
@@ -64,4 +64,4 @@ EXPOSE 25826
 RUN bin/plugin install logstash-input-heartbeat
 
 ENTRYPOINT ["/start.sh"]
-CMD ["bin/logstash", "agent", "-f","/config"]
+CMD ["bin/logstash", "agent", "-f","/config/logstash.sample.conf"]
