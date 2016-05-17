@@ -37,14 +37,14 @@ RUN set -x \
 # https://packages.elasticsearch.org/GPG-KEY-elasticsearch
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 46095ACC8548582C1A2699A9D27D666CD88E42B4
 
-
 ENV KIBANA_MAJOR 4.5
 ENV KIBANA_VERSION 4.5.0
 
 RUN echo "deb http://packages.elastic.co/kibana/${KIBANA_MAJOR}/debian stable main" > /etc/apt/sources.list.d/kibana.list
+
 RUN set -x \
 	&& apt-get update \
-	&& apt-get install -y --force-yes --no-install-recommends kibana=$KIBANA_VERSION \
+	&& apt-get install -y --no-install-recommends kibana=$KIBANA_VERSION \
 	&& chown -R kibana:kibana /opt/kibana \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -53,14 +53,9 @@ RUN set -x \
 	&& grep -q 'elasticsearch:9200' /opt/kibana/config/kibana.yml
 
 ENV PATH /opt/kibana/bin:$PATH
-ENV KIBANA_HOME /opt/kibana
 
-# Simplify for cross-container
-#ENV ES_URL http://es:9200
-
-WORKDIR $KIBANA_HOME
-
-ADD start.sh /start.sh
+COPY start.sh /
 
 EXPOSE 5601
-CMD ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
+CMD ["kibana"]
