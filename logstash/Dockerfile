@@ -52,6 +52,7 @@ RUN set -x \
 WORKDIR $LOGSTASH_HOME
 
 COPY start.sh /
+RUN chmod +x /start.sh
 
 # /conf is the default directory where our logstash will read pipeline config files
 # /logs is an optional attach point to reference something like /var/log on the host

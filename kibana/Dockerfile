@@ -55,6 +55,7 @@ RUN set -x \
 ENV PATH /opt/kibana/bin:$PATH
 
 COPY start.sh /
+RUN chmod +x /start.sh
 
 EXPOSE 5601
 ENTRYPOINT ["/start.sh"]
