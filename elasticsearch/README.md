@@ -4,7 +4,7 @@ nodes. As long as the versions match, you can mix-and-match "real"
 Elasticsearch nodes with container-ized ones.
 
 
-### All credits goes to itzg
+### All credits goes to itzg for this approch...
 Check-out **Geoff's** original [repo](https://hub.docker.com/r/itzg/elasticsearch/). 
 
 
@@ -68,14 +68,14 @@ environment variables (`-e`) like
 
 Since Docker's `-e` settings are baked into the container definition, this image provides an
 extra feature to change any of the settings below for an existing container. Either
-create/edit the file `env` in the `/conf` volume mapping or edit within the running container's
+create/edit the file `env` in the `/es/config` volume mapping or edit within the running container's
 context using:
 
-    docker exec -it CONTAINER_ID vi /conf/env
+    docker exec -it CONTAINER_ID vi /es/config/env
 
 replacing `CONTAINER_ID` with the container's ID or name.
 
-The contents of the `/conf/env` file are standard shell
+The contents of the `/es/config/env` file are standard shell
 
     NAME=VALUE
 
@@ -116,18 +116,12 @@ list of plugins.
 
     -e PLUGINS=ID[,ID]
 
-In this example, it will install the Marvel plugin
-
-    -e PLUGINS=elasticsearch/marvel/latest
-    -e PLUGINS=royrusso/elasticsearch-HQ
-   
-	
-_Example_:
+In these examples, it will install the HQ and Marvel plugins:
 ```
 docker run -d -p 9200:9200 -p 9300:9300 -e PLUGINS=royrusso/elasticsearch-HQ nicolaihald/elasticsearch
+docker run -d -p 9200:9200 -p 9300:9300 -e PLUGINS=royrusso/elasticsearch-HQ -e PLUGINS=elasticsearch/marvel/latest nicolaihald/elasticsearch
 ```
-
-Many more plugins [are available here](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-plugins.html#known-plugins).
+Checkout the [documentation](https://www.elastic.co/guide/en/elasticsearch/plugins/current/index.html) for more plugins.
 
 ## Publish As
 

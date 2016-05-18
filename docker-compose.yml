@@ -9,9 +9,7 @@ services:
       - ./elasticsearch/config:/es/config
     ports:
       - "9200:9200"
-      - "9300:9300"
-#    environment:
-#      - PLUGINS=royrusso/elasticsearch-HQ    
+      - "9300:9300" 
     networks: 
       - elk-network
 
@@ -32,17 +30,20 @@ services:
       - elasticsearch
     networks: 
       - elk-network
-#   
+
+  kibana:
+    container_name: "KB"
+    #build: kibana/
+    image: nicolaihald/kibana:latest    
+    ports:
+      - "5601:5601"
+    links:
+      - elasticsearch
+    networks: 
+      - elk-network
+
+# NETWORKING  
 networks: 
     elk-network:
       driver: bridge
 
-#kibana:
-#  #build: kibana/
-#  image: nicolaihald/kibana:latest
-#  volumes:
-#    - ./kibana/config/:/opt/kibana/config/
-#  ports:
-#    - "5601:5601"
-#  links:
-#    - elasticsearch#
