@@ -26,8 +26,17 @@ USER elasticsearch
 
 EXPOSE 9200 9300
 
-ENV OPTS=-Dnetwork.host=_non_loopback_
+# set ES_HEAP_SIZE to 50% of mem_limit, but no more than 31g
+ENV CLUSTER_NAME=Elastic \
+	ES_HEAP_SIZE=1g \
+	ES_NODE_MASTER=true \
+	ES_NODE_DATA=true \
+	ES_NETWORK_HOST=_eth0:ipv4_ \
+	ES_NETWORK_BIND_HOST=0.0.0.0 \
+	ES_DISOVERY_ZEN_PING_MULTICAST_ENABLED=true \
+	ES_DISOVERY_ZEN_PING_UNICAST_HOSTS=
 
+#ENV OPTS=-Dnetwork.host=_non_loopback_
 
 # default plugin
 #ENV PLUGINS royrusso/elasticsearch-HQ

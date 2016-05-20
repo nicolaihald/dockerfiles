@@ -209,17 +209,18 @@ node.data: ${ES_NODE_DATA}
 
 # Set the bind address specifically (IPv4 or IPv6):
 #
-#network.bind_host: 192.168.0.1
+network.bind_host: ${ES_NETWORK_BIND_HOST}
 
 # Set the address other nodes will use to communicate with this node. If not
 # set, it is automatically derived. It must point to an actual IP address.
 #
 #network.publish_host: 192.168.0.1
+network.publish_host: ${ES_NETWORK_HOST}
 
 # Set both 'bind_host' and 'publish_host':
 #
 #network.host: 192.168.0.1
-network.host: 0.0.0.0
+network.host: ${ES_NETWORK_HOST}
 
 # Set a custom port for the node to node communication (9300 by default):
 #
@@ -329,11 +330,14 @@ network.host: 0.0.0.0
 # 1. Disable multicast discovery (enabled by default):
 #
 #discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.multicast.enabled: ${ES_DISOVERY_ZEN_PING_MULTICAST_ENABLED}
 #
 # 2. Configure an initial list of master nodes in the cluster
 #    to perform discovery when new nodes (master or data) are started:
 #
 #discovery.zen.ping.unicast.hosts: ["host1", "host2:port"]
+discovery.zen.ping.unicast.hosts: ${ES_DISOVERY_ZEN_PING_UNICAST_HOSTS}
+
 
 # EC2 discovery allows to use AWS EC2 API in order to perform discovery.
 #
