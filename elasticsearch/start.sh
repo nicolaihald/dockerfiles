@@ -14,7 +14,7 @@ fi
 
 OPTS="$OPTS -Des.path.conf=/es/config \
   -Des.path.data=/es/data \
-  -Des.path.logs=/es/data \
+  -Des.path.logs=/es/data/ \
   -Des.transport.tcp.port=9300 \
   -Des.http.port=9200"
 
@@ -29,6 +29,10 @@ if [ -n "$CLUSTER" ]; then
 fi
 
 if [ -n "$NODE_NAME" ]; then
+  OPTS="$OPTS -Des.node.name=$NODE_NAME"
+fi
+
+if [ -n "$NETWORK" ]; then
   OPTS="$OPTS -Des.node.name=$NODE_NAME"
 fi
 
