@@ -4,7 +4,7 @@ nodes. As long as the versions match, you can mix-and-match "real"
 Elasticsearch nodes with container-ized ones.
 
 
-### All credits goes to itzg for this approch...
+#### All credits goes to itzg for this approach...
 Check-out **Geoff's** original [repo](https://hub.docker.com/r/itzg/elasticsearch/). 
 
 
@@ -20,16 +20,16 @@ it's alive:
 http://DOCKERHOST:9200/
 
     {
-      "status" : 200,
-      "name" : "Charon",
-      "version" : {
-        "number" : "1.3.5",
-        "build_hash" : "4a50e7df768fddd572f48830ae9c35e4ded86ac1",
-        "build_timestamp" : "2014-11-05T15:21:28Z",
-        "build_snapshot" : false,
-        "lucene_version" : "4.9"
+      name: "320ff571448f",
+      cluster_name: "Elastic",
+      version: {
+        number: "2.3.2",
+        build_hash: "b9e4a6acad4008027e4038f6abed7f7dba346f94",
+        build_timestamp: "2016-04-21T16:03:47Z",
+        build_snapshot: false,
+        lucene_version: "5.5.0"
       },
-      "tagline" : "You Know, for Search"
+      tagline: "You Know, for Search"
     }
 
 Where `DOCKERHOST` would be the actual hostname of your host running
@@ -39,24 +39,29 @@ Docker.
 
 To run a multi-node cluster (3-node in this example) on a single Docker machine use:
 
-    docker run -d --name es0 -p 9200:9200                    es
-    docker run -d --name es1 --link es0 -e UNICAST_HOSTS=es0 es
-    docker run -d --name es2 --link es0 -e UNICAST_HOSTS=es0 es
+    docker run -d --name ES0 -p 9200:9200                    nicolaihald/elasticsearch
+    docker run -d --name ES1 --link ES0 -e UNICAST_HOSTS=ES0 nicolaihald/elasticsearch
+    docker run -d --name ES2 --link ES0 -e UNICAST_HOSTS=ES0 nicolaihald/elasticsearch
 
 
 and then check the cluster health, such as http://192.168.99.100:9200/_cluster/health?pretty
 
     {
-      "cluster_name" : "elasticsearch",
-      "status" : "green",
-      "timed_out" : false,
-      "number_of_nodes" : 3,
-      "number_of_data_nodes" : 3,
-      "active_primary_shards" : 0,
-      "active_shards" : 0,
-      "relocating_shards" : 0,
-      "initializing_shards" : 0,
-      "unassigned_shards" : 0
+      cluster_name: "Elastic",
+      status: "green",
+      timed_out: false,
+      number_of_nodes: 2,
+      number_of_data_nodes: 2,
+      active_primary_shards: 6,
+      active_shards: 12,
+      relocating_shards: 0,
+      initializing_shards: 0,
+      unassigned_shards: 0,
+      delayed_unassigned_shards: 0,
+      number_of_pending_tasks: 0,
+      number_of_in_flight_fetch: 0,
+      task_max_waiting_in_queue_millis: 0,
+      active_shards_percent_as_number: 100
     }
 
 # Configuration
@@ -71,7 +76,10 @@ extra feature to change any of the settings below for an existing container. Eit
 create/edit the file `env` in the `/es/config` volume mapping or edit within the running container's
 context using:
 
-    docker exec -it CONTAINER_ID vi /es/config/env
+```
+docker exec -it CONTAINER_ID bash
+elasticsearch@CONTAINER_ID:~$ cat /es/config/env
+```
 
 replacing `CONTAINER_ID` with the container's ID or name.
 
@@ -94,7 +102,7 @@ port mapping out from the container_.
 If joining a pre-existing cluster, then you may need to specify a cluster name
 different than the default "elasticsearch":
 
-    -e CLUSTER=dockers
+    -e CLUSTER_NAME=dockers
 
 ## Zen Unicast Hosts
 

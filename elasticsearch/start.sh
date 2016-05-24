@@ -18,18 +18,25 @@ OPTS="$OPTS -Des.path.conf=/es/config \
   -Des.transport.tcp.port=9300 \
   -Des.http.port=9200"
 
-if [ -n "$CLUSTER" ]; then
-  OPTS="$OPTS -Des.cluster.name=$CLUSTER"
+if [ -n "$CLUSTER_NAME" ]; then
+  OPTS="$OPTS -Des.cluster.name=$CLUSTER_NAME"
   if [ -n "$CLUSTER_FROM" ]; then
-    if [ -d /es/data/$CLUSTER_FROM -a ! -d /es/data/$CLUSTER ]; then
-      echo "Performing cluster data migration from $CLUSTER_FROM to $CLUSTER"
-      mv /es/data/$CLUSTER_FROM /es/data/$CLUSTER
+    if [ -d /es/data/$CLUSTER_FROM -a ! -d /es/data/$CLUSTER_NAME ]; then
+      echo "Performing cluster data migration from $CLUSTER_FROM to $CLUSTER_NAME"
+      mv /es/data/$CLUSTER_FROM /es/data/$CLUSTER_NAME
     fi
   fi
 fi
 
 if [ -n "$NODE_NAME" ]; then
   OPTS="$OPTS -Des.node.name=$NODE_NAME"
+fi
+
+if [ -n "$NODE_MASTER" ]; then
+  OPTS="$OPTS -Des.node.master=$NODE_MASTER"
+fi
+if [ -n "$NODE_DATA" ]; then
+  OPTS="$OPTS -Des.node.data=$NODE_DATA"
 fi
 
 if [ -n "$NETWORK" ]; then
