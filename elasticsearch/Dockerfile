@@ -1,6 +1,6 @@
 FROM java:8-jre
 
-# All credits goes to Geoff Bourne. 
+# credits goes to Geoff Bourne. 
 # Checkout his original repo: https://hub.docker.com/r/itzg/elasticsearch/
 MAINTAINER nicolaihald
 
@@ -17,11 +17,10 @@ RUN useradd -d $ES_HOME -M -r elasticsearch && \
 
 RUN mkdir /es /es/data /es/config && touch /es/data/.CREATED /es/config/.CREATED && chown -R elasticsearch: /es/data /es/config
 
-COPY config/ /es/config
 
-
-# exposed mounting points
+# Add mounting points
 VOLUME ["/es/data", "/es/config"]
+COPY config/ /es/config
 
 ADD start.sh /start.sh
 
@@ -42,10 +41,10 @@ ENV CLUSTER_NAME=Elastic \
 	#ES_DISOVERY_ZEN_PING_MULTICAST_ENABLED=true \
 	#ES_DISOVERY_ZEN_PING_UNICAST_HOSTS=
 
-#ENV OPTS=-Dnetwork.host=_non_loopback_
 
 # Pre-install default plugin
 #ENV PLUGINS royrusso/elasticsearch-HQ
+#ENV OPTS=-Dnetwork.host=_non_loopback_
 RUN bin/plugin install royrusso/elasticsearch-HQ
 
 CMD ["/bin/bash", "/start.sh"]

@@ -54,7 +54,9 @@ RUN set -x \
 
 ENV PATH /opt/kibana/bin:$PATH
 
+COPY config/ /opt/kibana/config
 COPY start.sh /
+
 RUN chmod +x /start.sh
 
 EXPOSE 5601
