@@ -1,7 +1,5 @@
 FROM java:8-jre
 
-# credits goes to Geoff Bourne. 
-# Checkout his original repo: https://hub.docker.com/r/itzg/elasticsearch/
 MAINTAINER nicolaihald
 
 ENV ES_VERSION 2.3.2
@@ -24,8 +22,6 @@ VOLUME ["/es/data", "/es/config"]
 COPY config/ /es/config
 
 ADD start.sh /start.sh
-
-
 USER elasticsearch
 
 EXPOSE 9200 9300
@@ -33,7 +29,10 @@ EXPOSE 9200 9300
 # DEFAULT SETTINGS:
 # Set ES_HEAP_SIZE to 50% of mem_limit:
 ENV CLUSTER_NAME=Elastic \
-	ES_HEAP_SIZE=1g 
+	#ES_HEAP_SIZE=1g \
+	# AWS: 	
+	DISOVERY_EC2_GROUPS= \
+	DISOVERY_EC2_TAG_ES_CLUSTER=
 
 # Pre-install default plugin
 RUN bin/plugin install royrusso/elasticsearch-HQ

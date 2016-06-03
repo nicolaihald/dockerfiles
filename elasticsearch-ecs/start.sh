@@ -56,7 +56,6 @@ fi
 #  OPTS="$OPTS -Des.transport.publish_port=$(echo $PUBLISH_AS | awk -F: '{if ($2) print $2; else print 9300}')"
 #fi
 
-
 if [ -n "$AWS_PUBLISH_HOST" ]; then
   # ECS will report the docker interface without help, so we override that with host's private ip
   AWS_PRIVATE_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
@@ -64,6 +63,20 @@ if [ -n "$AWS_PUBLISH_HOST" ]; then
 
   # OR... network.publish_host: _ec2:privateIp_
 fi
+
+
+# AWS CLOUD DISCOVERY SETTINGS: 
+# ------------------------------------------------------------------
+if [ -n "$DISOVERY_EC2_GROUPS" ]; then
+  OPTS="$OPTS -Des.discovery.ec2.groups=$DISOVERY_EC2_GROUPS"
+fi
+
+if [ -n "$DISOVERY_EC2_TAG_ES_CLUSTER" ]; then
+  OPTS="$OPTS -Des.discovery.ec2.tag.ES_CLUSTER=$DISOVERY_EC2_TAG_ES_CLUSTER"
+fi
+# ------------------------------------------------------------------
+
+
 
 if [ -n "$PLUGINS" ]; then
   for p in $(echo $PLUGINS | awk -v RS=, '{print}')

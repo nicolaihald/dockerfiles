@@ -398,5 +398,16 @@ cluster.name: ${CLUSTER_NAME}
 #
 #http.jsonp.enable: true
 
-#http.cors.enabled: true
-#http.cors.allow-origin: 
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+
+############################ Custom Configuration ##########################
+
+discovery.type: ec2
+discovery.ec2.groups: ${DISOVERY_EC2_GROUPS}
+#discovery.ec2.groups: ["sg-12345"]
+
+# https://www.elastic.co/guide/en/elasticsearch/plugins/current/cloud-aws-discovery.html#cloud-aws-discovery-filtering
+discovery.ec2.tag.ES_CLUSTER: ${DISOVERY_EC2_TAG_ES_CLUSTER}
+
+plugin.madatory: cloud-aws
