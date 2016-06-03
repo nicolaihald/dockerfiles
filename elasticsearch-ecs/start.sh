@@ -68,7 +68,7 @@ fi
 # AWS CLOUD DISCOVERY SETTINGS: 
 # ------------------------------------------------------------------
 if [ -n "$DISOVERY_EC2_GROUPS" ]; then
-  OPTS="$OPTS -Des.discovery.ec2.groups=$DISOVERY_EC2_GROUPS"
+  OPTS="$OPTS -Des.discovery.ec2.groups=[$DISOVERY_EC2_GROUPS]"
 fi
 
 if [ -n "$DISOVERY_EC2_TAG_ES_CLUSTER" ]; then
