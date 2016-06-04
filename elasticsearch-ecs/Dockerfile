@@ -28,11 +28,12 @@ EXPOSE 9200 9300
 
 # DEFAULT SETTINGS:
 # Set ES_HEAP_SIZE to 50% of mem_limit:
-ENV CLUSTER_NAME=Elastic \
+ENV ES_CLUSTER_NAME=ElasticAWS \	
 	#ES_HEAP_SIZE=1g \
 	# AWS: 	
-	DISOVERY_EC2_GROUPS= \
-	DISOVERY_EC2_TAG_ES_CLUSTER=
+	ES_DISOVERY_TYPE=ec2 \
+	ES_DISOVERY_EC2_GROUPS=sg-8c53fceb \
+	ES_CLOUD_AWS_REGION=eu-west-1
 
 # Pre-install default plugin
 RUN bin/plugin install royrusso/elasticsearch-HQ
