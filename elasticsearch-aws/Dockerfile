@@ -67,7 +67,7 @@ EXPOSE 9200 9300
 
 # Allow us to customize the entrypoint of the image.
 COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
+#RUN chmod +x /docker-entrypoint.sh
 
 # Start container
 ENTRYPOINT ["/docker-entrypoint.sh"]

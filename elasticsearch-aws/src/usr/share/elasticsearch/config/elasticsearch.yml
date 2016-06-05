@@ -330,7 +330,11 @@ network.host: 0.0.0.0
 #
 # 1. Disable multicast discovery (enabled by default):
 #
-discovery.zen.ping.multicast.enabled: false
+# ----------------------
+        #
+        #discovery.zen.ping.multicast.enabled: false
+        #
+# ----------------------
 #discovery.zen.ping.multicast.enabled: ${ES_DISOVERY_ZEN_PING_MULTICAST_ENABLED}
 #
 # 2. Configure an initial list of master nodes in the cluster
@@ -365,7 +369,7 @@ discovery.zen.ping.multicast.enabled: false
 ################################## Slow Log ##################################
 
 # Shard level query and fetch threshold logging.
-index.search.slowlog.threshold.query.warn: 10s
+#index.search.slowlog.threshold.query.warn: 10s
 #index.search.slowlog.threshold.query.info: 5s
 #index.search.slowlog.threshold.query.debug: 2s
 #index.search.slowlog.threshold.query.trace: 500ms
