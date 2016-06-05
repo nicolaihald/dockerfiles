@@ -1,51 +1,62 @@
 FROM java:8-jre
-
-# credits goes to Geoff Bourne. 
-# Checkout his original repo: https://hub.docker.com/r/itzg/elasticsearch/
 MAINTAINER nicolaihald
 
-# Setup environment
-ENV ES_VERSION 2.3.2 
-ENV ES_HOME /opt/elasticsearch 
-ENV ES_VOL /var/lib/elasticsearch 
-ENV ES_USER elasticsearch 
-ENV ES_GROUP elasticsearch
+# grab gosu for easy step-down from root
+ENV GOSU_VERSION 1.7
+RUN set -x \
+  && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
+  && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
+  && export GNUPGHOME="$(mktemp -d)" \
+  && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+  && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+  && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+  && chmod +x /usr/local/bin/gosu \
+  && gosu nobody true
 
-#ENV ES_PLUGIN_AWS_VERSION 2.7.1
-#ENV ES_PLUGIN_BIGDESK_VERSION 2.5.0
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-repositories.html
+# https://packages.elasticsearch.org/GPG-KEY-elasticsearch
+RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 46095ACC8548582C1A2699A9D27D666CD88E42B4
 
-# Install requirements and Elasticsearch
-#RUN apt-get update && apt-get install -y \
-#RUN apt-get update
-RUN apt-get install -y \
-      curl \
-      bash && \
-    mkdir -p \
-      ${ES_VOL}/data \
-      ${ES_VOL}/logs \
-      ${ES_VOL}/plugins \
-      ${ES_VOL}/work \
-      ${ES_VOL}/config \
-      /opt &&\
-    curl -sSL https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz | tar zxf - -C /opt &&\
-    ln -s /opt/elasticsearch-${ES_VERSION} ${ES_HOME} 
-    #  <-- make a symbolic link ("/opt/elasticsearch") to "/opt/elasticsearch-2.3.2" 
+ENV ELASTICSEARCH_MAJOR 2.3
+ENV ELASTICSEARCH_VERSION 2.3.3
+ENV ELASTICSEARCH_REPO_BASE http://packages.elasticsearch.org/elasticsearch/2.x/debian
+ENV ES_HOME /usr/share/elasticsearch 
 
-RUN useradd -d $ES_HOME -M -r elasticsearch && \
-  chown -R elasticsearch: $ES_HOME
+RUN echo "deb $ELASTICSEARCH_REPO_BASE stable main" > /etc/apt/sources.list.d/elasticsearch.list
 
+RUN set -x \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends elasticsearch=$ELASTICSEARCH_VERSION \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV PATH ${ES_HOME}/bin:$PATH
+
+# install plugins 
 RUN ${ES_HOME}/bin/plugin install cloud-aws --timeout 2m &&\
     ${ES_HOME}/bin/plugin install royrusso/elasticsearch-HQ --timeout 2m
-    #${ES_HOME}/bin/plugin install royrusso/elasticsearch-HQ --silent --timeout 2m
+
+# set working directory and create directories
+WORKDIR /usr/share/elasticsearch
+
+RUN set -ex \
+  && for path in \
+    ./data \
+    ./logs \
+    ./config \
+    ./config/scripts \
+  ; do \
+    mkdir -p "$path"; \
+    chown -R elasticsearch:elasticsearch "$path"; \
+  done
 
 # Configure environment
 COPY src/ /
+# COPY config ./config
 
 # Expose volumes
-VOLUME ["${ES_VOL}"]
-
-# Define working directory.dps
-WORKDIR ${ES_VOL}
+VOLUME ["${ES_HOME}"]
+#VOLUME /usr/share/elasticsearch
+#VOLUME /usr/share/elasticsearch/data
 
 # Listen for 9200/tcp (HTTP) and 9300/tcp (cluster)
 EXPOSE 9200 9300
@@ -60,5 +71,3 @@ COPY docker-entrypoint.sh /
 # Start container
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["elasticsearch"]
-
-
