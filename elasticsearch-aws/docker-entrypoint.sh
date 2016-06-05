@@ -4,10 +4,12 @@
 # Exit the script as soon as something fails.
 set -e
 
-# Set environment
+
+# ###############################################################################
+# 					 	 Set environment
+# ################################################################################
 ES_CLUSTER_NAME=${ES_CLUSTER_NAME:-"elastico"}
 ES_CFG_FILE="/usr/share/elasticsearch/config/elasticsearch.yml"
-
 # Download the config file if given a URL
 if [ ! -z ${ES_CFG_URL} ]; then
   curl -sSL --output ${ES_CFG_FILE} ${ES_CFG_URL}
@@ -34,8 +36,11 @@ for VAR in `env`; do
     fi
   fi
 done
+# #################################################################################
 
-# Add elasticsearch as command if needed
+# #################################################################################
+# 	Add elasticsearch as command if needed
+# #################################################################################
 if [ "${1:0:1}" = '-' ]; then
 	set -- elasticsearch "$@"
 fi
@@ -49,6 +54,12 @@ if [ "$1" = 'elasticsearch' -a "$(id -u)" = '0' ]; then
 	set -- gosu elasticsearch "$@"
 	#exec gosu elasticsearch "$BASH_SOURCE" "$@"
 fi
+
+# #################################################################################
+# ECS will report the docker interface without help, so we override that with host's private ip
+# #################################################################################
+AWS_PRIVATE_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
+set -- "$@" --network.publish_host=$AWS_PRIVATE_IP
 
 # As argument is not related to elasticsearch,
 # then assume that user wants to run his own process,
