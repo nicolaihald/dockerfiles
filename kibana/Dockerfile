@@ -45,6 +45,7 @@ RUN echo "deb http://packages.elastic.co/kibana/${KIBANA_MAJOR}/debian stable ma
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends kibana=$KIBANA_VERSION \
+	&& apt-get clean \
 	&& chown -R kibana:kibana /opt/kibana \
 	&& rm -rf /var/lib/apt/lists/* \
 	\

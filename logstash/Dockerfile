@@ -41,6 +41,7 @@ RUN echo "deb http://packages.elastic.co/logstash/${LOGSTASH_MAJOR}/debian stabl
 RUN set -x \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends logstash=$LOGSTASH_VERSION \
+	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
 # update geolite database
@@ -58,11 +59,11 @@ RUN chmod +x /start.sh
 # /logs is an optional attach point to reference something like /var/log on the host
 VOLUME ["/config","/data"]
 
-# For collectd reception
-EXPOSE 25826
+# Listen for defaults: 25826 (collectd), 5044 (beats)
+EXPOSE 25826 5044
 
 # install plugins 
-RUN bin/plugin install logstash-input-heartbeat
+RUN bin/logstash-plugin install logstash-input-heartbeat logstash-input-beats
 
 ENTRYPOINT ["/start.sh"]
 CMD ["bin/logstash", "agent", "-f","/config/logstash.sample.conf"]

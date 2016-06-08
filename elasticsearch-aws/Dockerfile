@@ -28,6 +28,7 @@ RUN set -x \
   && apt-get update \
   && apt-get install -y --no-install-recommends elasticsearch=$ELASTICSEARCH_VERSION \
   && rm -rf /var/lib/apt/lists/*
+  && apt-get clean
 
 ENV PATH ${ES_HOME}/bin:$PATH
 

@@ -11,7 +11,8 @@ MAINTAINER Nicolai Hald <haldcph@gmail.com>
 
 # We'll need curl within the nginx image.
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
-      && rm -rf /var/lib/apt/lists/*
+	 && apt-get clean \
+	 && rm -rf /var/lib/apt/lists/*
 
 ###############################################################################
 #                                CONFIGURATION
