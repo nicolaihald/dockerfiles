@@ -1,6 +1,7 @@
 FROM java:8-jre
 
 MAINTAINER nicolaihald
+# TODO: Merge RUN and ENV commands (fewer layers)
 
 # install plugin dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -43,6 +44,12 @@ RUN set -x \
 	&& apt-get install -y --no-install-recommends logstash=$LOGSTASH_VERSION \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
+
+
+# Support downloading logstash configuration file during container startup:
+ENV LOGSTASH_CFG_URL=""
+# ENV LOGSTASH_CFG_URL="https://raw.githubusercontent.com/nicolaihald/dockerfiles/master/logstash/logstash.searchlogger.conf"
+
 
 # update geolite database
 RUN set -x \
