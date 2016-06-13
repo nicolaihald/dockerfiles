@@ -59,6 +59,7 @@ RUN set -x \
 
 WORKDIR $LOGSTASH_HOME
 
+COPY src/ /
 COPY start.sh /
 RUN chmod +x /start.sh
 
