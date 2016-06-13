@@ -15,9 +15,6 @@ RUN mkdir -p /usr/local/lib \
 # grab gosu for easy step-down from root
 ENV GOSU_VERSION 1.7
 RUN set -x \
-	# update geoip
-	&& wget -O /usr/local/bin/gosu "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" \
-
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
 	&& wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -50,17 +47,26 @@ RUN set -x \
 ENV LOGSTASH_CFG_URL=""
 # ENV LOGSTASH_CFG_URL="https://raw.githubusercontent.com/nicolaihald/dockerfiles/master/logstash/logstash.searchlogger.conf"
 
-
-# update geolite database
-RUN set -x \
-	&& wget -q -O tmp/GeoLiteCity.dat.gz "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz"  \
-	&& gzip -d /tmp/GeoLiteCity.dat.gz > /opt/logstash/GeoLiteCity.dat \
-	&& rm /tmp/GeoLiteCity.dat
-
 WORKDIR $LOGSTASH_HOME
 
 COPY src/ /
 COPY start.sh /
+RUN chmod +x /start.sh
+
+# update geolite database
+RUN set -x \
+	&& mkdir -p /data/geoip \
+	&& mkdir -p /config \
+	# Download latest version of the geolite database
+	&& wget -q -O /tmp/GeoLiteCity.dat.gz "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz"  \
+	#&& gzip -d /tmp/GeoLiteCity.dat.gz > /opt/logstash/GeoLiteCity.dat \
+	&& gzip -d /tmp/GeoLiteCity.dat.gz > /data/geoip/GeoLiteCity.dat \
+	&& rm /tmp/GeoLiteCity.dat \
+
+	## Set owner of logstash home so we can access the 
+    && chown -hR logstash:logstash /data/geoip \
+    && chmod -R 777 /data/geoip
+
 RUN chmod +x /start.sh
 
 # /conf is the default directory where our logstash will read pipeline config files
@@ -74,4 +80,4 @@ EXPOSE 25826 5044
 RUN bin/logstash-plugin install logstash-input-heartbeat logstash-input-beats
 
 ENTRYPOINT ["/start.sh"]
-CMD ["bin/logstash", "agent", "-f","/config/logstash.sample.conf"]
+CMD ["bin/logstash", "agent", "-f","/config"]
