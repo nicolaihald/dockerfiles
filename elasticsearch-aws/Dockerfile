@@ -27,13 +27,13 @@ RUN echo "deb $ELASTICSEARCH_REPO_BASE stable main" > /etc/apt/sources.list.d/el
 RUN set -x \
   && apt-get update \
   && apt-get install -y --no-install-recommends elasticsearch=$ELASTICSEARCH_VERSION \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
   && apt-get clean
 
 ENV PATH ${ES_HOME}/bin:$PATH
 
 # install plugins 
-RUN ${ES_HOME}/bin/plugin install cloud-aws --timeout 2m &&\
+RUN ${ES_HOME}/bin/plugin install cloud-aws --timeout 2m && \
     ${ES_HOME}/bin/plugin install royrusso/elasticsearch-HQ --timeout 2m
 
 # set working directory and create directories
